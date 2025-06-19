@@ -4,12 +4,19 @@ using System.Linq;
 using System;
 using System.IO;
 using AIConsoleApp.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace AIConsoleApp.Logging;
 
 public class SampleOutputLogger : ISampleOutputLogger
 {
     private readonly List<string> _runs = new();
+    private readonly string _path;
+
+    public SampleOutputLogger(IConfiguration config)
+    {
+        _path = config["Logging:SampleOutputPath"] ?? "sample_outputs.md";
+    }
 
     public void Record(string request, IEnumerable<Product> products)
     {
@@ -38,11 +45,10 @@ public class SampleOutputLogger : ISampleOutputLogger
     {
         if (_runs.Count == 0) return;
 
-        var path = "sample_outputs.md";
         var content = new StringBuilder();
 
         // If file doesn't exist, write header first
-        if (!File.Exists(path))
+        if (!File.Exists(_path))
         {
             content.AppendLine("# Sample Outputs\n");
         }
@@ -54,7 +60,7 @@ public class SampleOutputLogger : ISampleOutputLogger
         }
 
         // Append to existing file
-        File.AppendAllText(path, content.ToString());
-        Console.WriteLine($"Appended {_runs.Count} sample output(s) to {path}\n");
+        File.AppendAllText(_path, content.ToString());
+        Console.WriteLine($"Appended {_runs.Count} sample output(s) to {_path}\n");
     }
 } 

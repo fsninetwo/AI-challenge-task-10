@@ -9,7 +9,7 @@ public interface IAISettings
 
 public class AISettings : IAISettings
 {
-    public string ApiKey { get; set; } = string.Empty;
-    public string Model { get; set; } = "gpt-3.5-turbo";
-    public string Url { get; set; } = "https://api.openai.com/v1/chat/completions";
+    public string ApiKey { get; set; }
+    public string Model { get; set; }
+    public string Url { get; set; }
 } 
