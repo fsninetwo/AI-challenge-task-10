@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AIConsoleApp.Configuration;
 using AIConsoleApp.Services;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
+using System.Text.Json;
 
 namespace AIConsoleApp;
 
@@ -12,7 +14,7 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var serviceProvider = ConfigureServices();
-        var processor = serviceProvider.GetRequiredService<ITextProcessor>();
+        var search = serviceProvider.GetRequiredService<IProductSearch>();
 
         Console.WriteLine("Type your prompt (or 'exit' to quit):");
         while (true)
@@ -22,8 +24,17 @@ internal class Program
             if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
                 break;
 
-            var result = await processor.ProcessAsync(input ?? string.Empty);
-            Console.WriteLine($"AI: {result}\n");
+            var products = (await search.SearchAsync(input ?? string.Empty)).ToList();
+
+            if (products.Any())
+            {
+                var json = JsonSerializer.Serialize(products, new JsonSerializerOptions { WriteIndented = true });
+                Console.WriteLine($"Found {products.Count} products:\n{json}\n");
+            }
+            else
+            {
+                Console.WriteLine("No products matched your criteria.\n");
+            }
         }
     }
 
@@ -60,7 +71,7 @@ internal class Program
             };
         });
 
-        services.AddTransient<ITextProcessor, OpenAITextProcessor>();
+        services.AddTransient<IProductSearch, ProductSearchService>();
 
         return services.BuildServiceProvider();
     }
