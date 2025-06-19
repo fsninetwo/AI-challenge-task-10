@@ -6,6 +6,9 @@ using AIConsoleApp.Services;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Text.Json;
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
 
 namespace AIConsoleApp;
 
@@ -14,33 +17,8 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var serviceProvider = ConfigureServices();
-        var search = serviceProvider.GetRequiredService<IProductSearch>();
-
-        Console.WriteLine("Type your prompt (or 'exit' to quit):");
-        while (true)
-        {
-            Console.Write("> ");
-            var input = Console.ReadLine();
-            if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
-                break;
-
-            var products = (await search.SearchAsync(input ?? string.Empty)).ToList();
-
-            if (products.Any())
-            {
-                Console.WriteLine("Filtered Products:");
-                var index = 1;
-                foreach (var p in products)
-                {
-                    Console.WriteLine($"{index++}. {p.Name} - ${p.Price:F2}, Rating: {p.Rating:F1}, {(p.InStock ? "In Stock" : "Out of Stock")}");
-                }
-                Console.WriteLine();
-            }
-            else
-            {
-                Console.WriteLine("No products matched your criteria.\n");
-            }
-        }
+        var app = serviceProvider.GetRequiredService<AIConsoleApp.App.ProductSearchConsoleApp>();
+        await app.RunAsync();
     }
 
     private static ServiceProvider ConfigureServices()
@@ -77,6 +55,8 @@ internal class Program
         });
 
         services.AddTransient<IProductSearch, ProductSearchService>();
+        services.AddSingleton<AIConsoleApp.Logging.ISampleOutputLogger, AIConsoleApp.Logging.SampleOutputLogger>();
+        services.AddTransient<AIConsoleApp.App.ProductSearchConsoleApp>();
 
         return services.BuildServiceProvider();
     }
