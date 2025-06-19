@@ -28,8 +28,13 @@ internal class Program
 
             if (products.Any())
             {
-                var json = JsonSerializer.Serialize(products, new JsonSerializerOptions { WriteIndented = true });
-                Console.WriteLine($"Found {products.Count} products:\n{json}\n");
+                Console.WriteLine("Filtered Products:");
+                var index = 1;
+                foreach (var p in products)
+                {
+                    Console.WriteLine($"{index++}. {p.Name} - ${p.Price:F2}, Rating: {p.Rating:F1}, {(p.InStock ? "In Stock" : "Out of Stock")}");
+                }
+                Console.WriteLine();
             }
             else
             {
