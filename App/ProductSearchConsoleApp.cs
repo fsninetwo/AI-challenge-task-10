@@ -28,6 +28,8 @@ public class ProductSearchConsoleApp
         {
             Console.Write("> ");
             var input = Console.ReadLine();
+            if (input is null)
+                break;
             if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
                 break;
 
