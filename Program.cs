@@ -4,6 +4,11 @@ using System.Threading.Tasks;
 using AIConsoleApp.Configuration;
 using AIConsoleApp.Services;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
+using System.Text.Json;
+using System.Text;
+using System.IO;
+using System.Collections.Generic;
 
 namespace AIConsoleApp;
 
@@ -12,19 +17,8 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var serviceProvider = ConfigureServices();
-        var processor = serviceProvider.GetRequiredService<ITextProcessor>();
-
-        Console.WriteLine("Type your prompt (or 'exit' to quit):");
-        while (true)
-        {
-            Console.Write("> ");
-            var input = Console.ReadLine();
-            if (string.Equals(input, "exit", StringComparison.OrdinalIgnoreCase))
-                break;
-
-            var result = await processor.ProcessAsync(input ?? string.Empty);
-            Console.WriteLine($"AI: {result}\n");
-        }
+        var app = serviceProvider.GetRequiredService<AIConsoleApp.App.ProductSearchConsoleApp>();
+        await app.RunAsync();
     }
 
     private static ServiceProvider ConfigureServices()
@@ -60,7 +54,9 @@ internal class Program
             };
         });
 
-        services.AddTransient<ITextProcessor, OpenAITextProcessor>();
+        services.AddTransient<IProductSearch, ProductSearchService>();
+        services.AddSingleton<AIConsoleApp.Logging.ISampleOutputLogger, AIConsoleApp.Logging.SampleOutputLogger>();
+        services.AddTransient<AIConsoleApp.App.ProductSearchConsoleApp>();
 
         return services.BuildServiceProvider();
     }
