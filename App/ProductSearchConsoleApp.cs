@@ -36,8 +36,9 @@ public class ProductSearchConsoleApp
                 var index = 1;
                 foreach (var p in products)
                 {
-                    Console.WriteLine($"{index++}. {p.Name} - ${p.Price:F2}, Rating: {p.Rating:F1}, {(p.InStock ? "In Stock" : "Out of Stock")}\n");
+                    Console.WriteLine($"{index++,2}. {p.Name} - ${p.Price,8:F2}, Rating: {p.Rating,4:F1}, {(p.InStock ? "In Stock" : "Out of Stock")} ");
                 }
+                Console.WriteLine();
                 _logger.Record(input!, products);
             }
             else

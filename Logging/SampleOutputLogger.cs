@@ -21,7 +21,7 @@ public class SampleOutputLogger : ISampleOutputLogger
             var index = 1;
             foreach (var p in products)
             {
-                sb.AppendLine($"{index++}. {p.Name} - ${p.Price:F2}, Rating: {p.Rating:F1}, {(p.InStock ? "In Stock" : "Out of Stock")}");
+                sb.AppendLine($"{index++,2}. {p.Name} - ${p.Price,8:F2}, Rating: {p.Rating,4:F1}, {(p.InStock ? "In Stock" : "Out of Stock")}");
             }
         }
         else
@@ -36,15 +36,25 @@ public class SampleOutputLogger : ISampleOutputLogger
 
     public void Flush()
     {
-        if (_runs.Count < 2) return;
-        var md = new StringBuilder();
-        md.AppendLine("# Sample Outputs\n");
+        if (_runs.Count == 0) return;
+
+        var path = "sample_outputs.md";
+        var content = new StringBuilder();
+
+        // If file doesn't exist, write header first
+        if (!File.Exists(path))
+        {
+            content.AppendLine("# Sample Outputs\n");
+        }
+
         foreach (var run in _runs)
         {
-            md.AppendLine(run);
-            md.AppendLine();
+            content.AppendLine(run);
+            content.AppendLine();
         }
-        File.WriteAllText("sample_outputs.md", md.ToString());
-        Console.WriteLine("Sample outputs written to sample_outputs.md\n");
+
+        // Append to existing file
+        File.AppendAllText(path, content.ToString());
+        Console.WriteLine($"Appended {_runs.Count} sample output(s) to {path}\n");
     }
 } 
