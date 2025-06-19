@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace AIConsoleApp.Services;
 
@@ -57,6 +58,14 @@ public class ProductSearchService : IProductSearch
 
     private object BuildChatRequest(string userQuery)
     {
+        // Build a short catalog summary to give the model basic knowledge of the dataset
+        var categories = _products.Select(p => p.Category)
+                                   .Distinct(StringComparer.OrdinalIgnoreCase)
+                                   .OrderBy(c => c)
+                                   .ToList();
+
+        var summary = $"The product catalog contains { _products.Count } items across these categories: " + string.Join(", ", categories) + ".";
+
         var functionDef = new
         {
             name = "filter_products",
@@ -81,6 +90,7 @@ public class ProductSearchService : IProductSearch
             model = _settings.Model,
             messages = new[]
             {
+                new { role = "system", content = summary },
                 new { role = "user", content = userQuery }
             },
             functions = new[] { functionDef },
@@ -141,5 +151,53 @@ public class ProductSearchService : IProductSearch
         }
 
         return query;
+    }
+
+    private static bool IsEmpty(FilterCriteria c) =>
+        string.IsNullOrWhiteSpace(c.Category) &&
+        c.MaxPrice is null &&
+        c.MinRating is null &&
+        c.InStock is null &&
+        string.IsNullOrWhiteSpace(c.Keywords);
+
+    private FilterCriteria LocalParse(string userQuery)
+    {
+        var criteria = new FilterCriteria();
+        var lower = userQuery.ToLowerInvariant();
+
+        // price
+        var priceMatch = Regex.Match(lower, @"(?:under|below|less than)\s*\$?\s*(\d+(?:\.\d+)?)");
+        if (priceMatch.Success && decimal.TryParse(priceMatch.Groups[1].Value, out var price))
+            criteria.MaxPrice = price;
+
+        // rating
+        var ratingMatch = Regex.Match(lower, @"rating (?:above|over|greater than|>)\s*(\d+(?:\.\d+)?)");
+        if (ratingMatch.Success && double.TryParse(ratingMatch.Groups[1].Value, out var rating))
+            criteria.MinRating = rating;
+
+        // stock
+        if (lower.Contains("in stock")) criteria.InStock = true;
+        else if (lower.Contains("out of stock")) criteria.InStock = false;
+
+        // category
+        var allCategories = _products.Select(p => p.Category).Distinct(StringComparer.OrdinalIgnoreCase);
+        foreach (var cat in allCategories)
+        {
+            if (lower.Contains(cat.ToLowerInvariant())) { criteria.Category = cat; break; }
+        }
+
+        // keywords
+        var stop = new HashSet<string>(new[] { "under", "below", "less", "than", "price", "rating", "above", "over", "greater", "in", "stock", "out", "of", "and", "with", "the", "a", "an", "for", "max", "minimum", "budget" });
+        var words = Regex.Matches(lower, @"[a-zA-Z0-9\-']+").Select(m => m.Value).Where(w => w.Length > 2 && !stop.Contains(w) && !decimal.TryParse(w, out _));
+        if (!string.IsNullOrWhiteSpace(criteria.Category)) words = words.Where(w => w != criteria.Category.ToLowerInvariant());
+        criteria.Keywords = string.Join(' ', words);
+
+        return criteria;
+    }
+
+    private static bool IsSameCriteria(FilterCriteria a, FilterCriteria b)
+    {
+        return (a.Category ?? string.Empty).Equals(b.Category ?? string.Empty, StringComparison.OrdinalIgnoreCase)
+               && a.MaxPrice == b.MaxPrice && a.MinRating == b.MinRating && a.InStock == b.InStock && (a.Keywords ?? string.Empty).Equals(b.Keywords ?? string.Empty, StringComparison.OrdinalIgnoreCase);
     }
 } 
