@@ -1,4 +1,8 @@
 using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using System.IO;
 using AIConsoleApp.Models;
 
 namespace AIConsoleApp.Logging;
@@ -28,7 +32,7 @@ public class SampleOutputLogger : ISampleOutputLogger
         _runs.Add(sb.ToString());
     }
 
-    public void RecordNoMatch(string request) => Record(request, Array.Empty<Product>());
+    public void RecordNoMatch(string request) => Record(request, Enumerable.Empty<Product>());
 
     public void Flush()
     {

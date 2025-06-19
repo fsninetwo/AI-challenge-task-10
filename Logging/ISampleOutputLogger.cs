@@ -1,4 +1,5 @@
 using AIConsoleApp.Models;
+using System.Collections.Generic;
 
 namespace AIConsoleApp.Logging;
 
