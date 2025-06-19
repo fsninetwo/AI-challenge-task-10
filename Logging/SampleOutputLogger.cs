@@ -10,12 +10,13 @@ namespace AIConsoleApp.Logging;
 
 public class SampleOutputLogger : ISampleOutputLogger
 {
-    private readonly List<string> _runs = new();
     private readonly string _path;
+    private bool _headerWritten;
 
     public SampleOutputLogger(IConfiguration config)
     {
         _path = config["Logging:SampleOutputPath"] ?? "sample_outputs.md";
+        _headerWritten = File.Exists(_path); // if file exists assume header was written
     }
 
     public void Record(string request, IEnumerable<Product> products)
@@ -36,31 +37,31 @@ public class SampleOutputLogger : ISampleOutputLogger
             sb.AppendLine("No products matched your criteria.");
         }
 
-        _runs.Add(sb.ToString());
+        AppendToFile(sb.ToString());
     }
 
     public void RecordNoMatch(string request) => Record(request, Enumerable.Empty<Product>());
 
     public void Flush()
     {
-        if (_runs.Count == 0) return;
+        // nothing to flush; records already written
+    }
 
+    private void AppendToFile(string run)
+    {
         var content = new StringBuilder();
-
-        // If file doesn't exist, write header first
-        if (!File.Exists(_path))
+        if (!_headerWritten)
         {
             content.AppendLine("# Sample Outputs\n");
+            _headerWritten = true;
         }
 
-        foreach (var run in _runs)
-        {
-            content.AppendLine(run);
-            content.AppendLine();
-        }
+        content.AppendLine($"_Last Update: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC_\n");
 
-        // Append to existing file
+        content.AppendLine(run);
+        content.AppendLine();
+
         File.AppendAllText(_path, content.ToString());
-        Console.WriteLine($"Appended {_runs.Count} sample output(s) to {_path}\n");
+        Console.WriteLine($"Saved sample output to {_path}\n");
     }
 } 
