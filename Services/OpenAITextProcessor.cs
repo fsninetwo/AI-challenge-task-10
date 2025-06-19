@@ -20,7 +20,7 @@ public class OpenAITextProcessor : ITextProcessor
 
     public async Task<string> ProcessAsync(string input)
     {
-        const string url = "https://api.openai.com/v1/chat/completions";
+        var url = _settings.Url;
 
         var requestBody = new
         {

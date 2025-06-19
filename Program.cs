@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using AIConsoleApp.Configuration;
 using AIConsoleApp.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace AIConsoleApp;
 
@@ -28,21 +29,34 @@ internal class Program
 
     private static ServiceProvider ConfigureServices()
     {
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .Build();
+
         var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
         services.AddHttpClient();
 
         services.AddSingleton<IAISettings>(_ =>
         {
-            var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            var openAi = configuration.GetSection("OpenAI");
+
+            var apiKey = configuration["OPENAI_API_KEY"] ?? openAi["ApiKey"];
+            var model = openAi["Model"] ?? "gpt-3.5-turbo";
+            var url = openAi["Url"] ?? "https://api.openai.com/v1/chat/completions";
+
             if (string.IsNullOrWhiteSpace(apiKey))
             {
-                Console.WriteLine("Warning: OPENAI_API_KEY environment variable not set. Requests will fail without it.");
+                Console.WriteLine("Warning: OPENAI_API_KEY environment variable or OpenAI:ApiKey not set. Requests will fail without it.");
             }
 
             return new AISettings
             {
                 ApiKey = apiKey ?? string.Empty,
-                Model = "gpt-3.5-turbo"
+                Model = model,
+                Url = url
             };
         });
 

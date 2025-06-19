@@ -1,0 +1,52 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio / Rider folders
+.vs/
+.idea/
+ReSharper*/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Tooling
+*.ncrunch*
+*.ndoc
+
+# Logs
+*.log
+
+# Resharper
+*_ReSharper.*
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Rider
+.idea/
+
+# DotCover
+*.dotCover
+
+# Azure Pipelines
+.nuget/packages/
+
+# dotenv, secrets
+.env
+
+# Configuration
+appsettings.Development.json
+appsettings.Local.json
+
+# Others
+TestResults/ 
