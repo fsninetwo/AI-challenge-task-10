@@ -53,6 +53,7 @@ public class ProductSearchService : IProductSearch
         var criteria = ParseCriteria(jsonResponse);
 
         var results = ApplyFilter(criteria);
+        results = ApplySuperlativeHeuristics(results, userQuery);
         return results;
     }
 
@@ -199,5 +200,25 @@ public class ProductSearchService : IProductSearch
     {
         return (a.Category ?? string.Empty).Equals(b.Category ?? string.Empty, StringComparison.OrdinalIgnoreCase)
                && a.MaxPrice == b.MaxPrice && a.MinRating == b.MinRating && a.InStock == b.InStock && (a.Keywords ?? string.Empty).Equals(b.Keywords ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static IEnumerable<Product> ApplySuperlativeHeuristics(IEnumerable<Product> products, string userQuery)
+    {
+        var lower = userQuery.ToLowerInvariant();
+
+        // Handle "most expensive" (return highest-priced item)
+        if (lower.Contains("most expensive"))
+        {
+            return products.OrderByDescending(p => p.Price).Take(1);
+        }
+
+        // Handle "cheapest", "least expensive", or "lowest price" (return lowest-priced item)
+        if (lower.Contains("cheapest") || lower.Contains("least expensive") || lower.Contains("lowest price"))
+        {
+            return products.OrderBy(p => p.Price).Take(1);
+        }
+
+        // Default: return original list
+        return products;
     }
 } 

@@ -1,16 +1,72 @@
 # Sample Outputs
-
-_Last Update: 2025-06-19 19:22:10 UTC_
-
-### Request: Wireless Headphones under 100
 Filtered Products:
- 1. Wireless Headphones - $   99.99, Rating:  4.5, In Stock
-
-
-_Last Update: 2025-06-19 19:22:12 UTC_
-
-### Request: Gaming Mouse under 70
+1. Smartphone - $  799.99, Rating:  4.5, Out of Stock
+ 
+Saved sample output to sample_outputs.md
+ 
+> I want a smartphone only if it's in stock
+Searching, please wait...
+ 
+Found 1 product:
+ 
 Filtered Products:
- 1. Gaming Mouse - $   59.99, Rating:  4.3, In Stock
-
-
+1. Smartphone - $  799.99, Rating:  4.5, Out of Stock
+ 
+Saved sample output to sample_outputs.md
+ 
+> I want something for kitchen
+Searching, please wait...
+ 
+Found 10 products:
+ 
+Filtered Products:
+1. Blender - $   49.99, Rating:  4.2, In Stock
+2. Air Fryer - $   89.99, Rating:  4.6, In Stock
+3. Microwave Oven - $  129.99, Rating:  4.5, Out of Stock
+4. Coffee Maker - $   79.99, Rating:  4.3, In Stock
+5. Toaster - $   29.99, Rating:  4.1, In Stock
+6. Electric Kettle - $   39.99, Rating:  4.4, In Stock
+7. Rice Cooker - $   59.99, Rating:  4.3, In Stock
+8. Pressure Cooker - $   99.99, Rating:  4.7, In Stock
+9. Dishwasher - $  549.99, Rating:  4.6, Out of Stock
+10. Refrigerator - $  999.99, Rating:  4.8, Out of Stock
+ 
+Saved sample output to sample_outputs.md
+ 
+> I want the most expensive thing for kitchen
+Searching, please wait...
+ 
+Found 10 products:
+ 
+Filtered Products:
+1. Blender - $   49.99, Rating:  4.2, In Stock
+2. Air Fryer - $   89.99, Rating:  4.6, In Stock
+3. Microwave Oven - $  129.99, Rating:  4.5, Out of Stock
+4. Coffee Maker - $   79.99, Rating:  4.3, In Stock
+5. Toaster - $   29.99, Rating:  4.1, In Stock
+6. Electric Kettle - $   39.99, Rating:  4.4, In Stock
+7. Rice Cooker - $   59.99, Rating:  4.3, In Stock
+8. Pressure Cooker - $   99.99, Rating:  4.7, In Stock
+9. Dishwasher - $  549.99, Rating:  4.6, Out of Stock
+10. Refrigerator - $  999.99, Rating:  4.8, Out of Stock
+ 
+Saved sample output to sample_outputs.md
+ 
+> I want one most expensive product for kitchen
+Searching, please wait...
+ 
+Found 10 products:
+ 
+Filtered Products:
+1. Blender - $   49.99, Rating:  4.2, In Stock
+2. Air Fryer - $   89.99, Rating:  4.6, In Stock
+3. Microwave Oven - $  129.99, Rating:  4.5, Out of Stock
+4. Coffee Maker - $   79.99, Rating:  4.3, In Stock
+5. Toaster - $   29.99, Rating:  4.1, In Stock
+6. Electric Kettle - $   39.99, Rating:  4.4, In Stock
+7. Rice Cooker - $   59.99, Rating:  4.3, In Stock
+8. Pressure Cooker - $   99.99, Rating:  4.7, In Stock
+9. Dishwasher - $  549.99, Rating:  4.6, Out of Stock
+10. Refrigerator - $  999.99, Rating:  4.8, Out of Stock
+ 
+Saved sample output to sample_outputs.md
