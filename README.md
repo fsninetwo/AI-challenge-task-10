@@ -44,7 +44,13 @@ $Env:OPENAI_API_KEY="sk-..."
 When prompted, type a request such as:
 
 ```
-I need electronics under $100 that are in stock
+Show me the most expensive thing for kitchen that's in stock
+```
+
+or
+
+```
+Find the cheapest electronics under $50
 ```
 
 Exit any time with `exit`.
@@ -70,8 +76,15 @@ Filtered Products:
 Thank you for using the AI Product Finder. Goodbye!
 ```
 
+## Features
+
+* Natural-language product search powered by OpenAI function-calling (`filter_products`).
+* Supports common filters: **category**, **maximum price**, **minimum rating**, **in-stock constraint**, and **keywords**.
+* NEW ➜ **Superlatives**: understand phrases such as "most expensive", "cheapest", "least expensive", or "lowest price" and automatically return the single top matching product.
+* Automatic markdown logging of every request & result to `sample_outputs.md` with timestamps.
+
 ## Notes
 
 * `products.json` is copied to the build output automatically; modify it to extend the catalog.
-* The app uses OpenAI function-calling (`filter_products`) for NL-to-JSON conversion.
+* The app uses OpenAI function-calling (`filter_products`) for NL-to-JSON conversion and merges in local heuristics for superlatives (most/least expensive).
 * Ensure your network allows outbound HTTPS to `api.openai.com`. 
